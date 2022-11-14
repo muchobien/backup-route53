@@ -56,27 +56,27 @@ jobs:
         uses: ./
 
       - name: List files
-        run: ls -la ~/muchobien/backup-route53
+        run: ls -la ./muchobien/backup-route53
 
       - name: Check if files are created
         run: |
-          if [ ! -f "~/muchobien/backup-route53/example.com.json" ]; then
+          if [ ! -f "./muchobien-backup-route53/example.com.json" ]; then
             echo "example.com.json not found"
             exit 1
           fi
 
-          if [ ! -f "~/muchobien/backup-route53/muchobien.dev.json" ]; then
+          if [ ! -f "./muchobien-backup-route53/muchobien.dev.json" ]; then
             echo "muchobien.dev.json not found"
             exit 1
           fi
 
       - name: Zip files
         run: |
-          cd ~/muchobien/backup-route53
+          cd ./muchobien-backup-route53
           zip -r backup-route53.zip .
 
       - name: Upload files
         uses: actions/upload-artifact@v3
         with:
           name: backup-route53
-          path: ~/muchobien/backup-route53/backup-route53.zip
+          path: ./muchobien-backup-route53/backup-route53.zip

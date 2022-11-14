@@ -13,7 +13,7 @@ inputs:
   path:
     description: "The path to store the backup"
     required: false
-    default: "~/muchobien/backup-route53"
+    default: "./muchobien-backup-route53"
 
 runs:
   using: "node16"
