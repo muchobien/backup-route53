@@ -16,7 +16,7 @@ Add the following step to your workflow:
   uses: muchobien/backup-route53@v1
   with:
     excludes: 'example.com' # optional
-    path: ~/muchobien/backup-route53 # optional, default ~/muchobien/backup-route53
+    path: ./muchobien-backup-route53 # optional, default ./muchobien-backup-route53
 ```
 
 ## License Summary
