@@ -67,11 +67,13 @@ jobs:
             exit 1
           fi
 
-      - name: Tar files
-        run: tar -cvf route53.tar ~/muchobien/backup-route53
+      - name: Zip files
+        run: |
+          cd ~/muchobien/backup-route53
+          zip -r backup-route53.zip .
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload files
+        uses: actions/upload-artifact@v3
         with:
-          name: route53-backup
-          path: route53.tar
-          if-no-files-found: error
+          name: backup-route53
+          path: ~/muchobien/backup-route53/backup-route53.zip
