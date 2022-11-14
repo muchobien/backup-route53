@@ -1,0 +1,20 @@
+name: "Backup Route53"
+description: "A Github action to backup Route53 zones"
+author: "muchobien"
+
+branding:
+  icon: cloud
+  color: orange
+
+inputs:
+  excludes:
+    description: "The zones to exclude from the backup"
+    required: false
+  path:
+    description: "The path to store the backup"
+    required: false
+    default: "~/muchobien/backup-route53"
+
+runs:
+  using: "node16"
+  main: "dist/index.js"

@@ -1,0 +1,87 @@
+name: "build-test"
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - "releases/*"
+
+jobs:
+  build: # make sure build/ci work properly
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.12.1"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn all
+
+  test: # make sure the action works on a clean machine without building
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://localhost:4566
+    services:
+      localstack:
+        image: localstack/localstack
+        env:
+          SERVICES: route53
+        ports:
+          - 4566:4566
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Route53
+        run: |
+          aws --endpoint-url="$AWS_ENDPOINT_URL" route53 create-hosted-zone --name example.com --caller-reference GHActions
+          ID=$(aws --endpoint-url="$AWS_ENDPOINT_URL" route53 list-hosted-zones-by-name --dns-name example.com --query="HostedZones[0].Id" --output text)
+          aws --endpoint-url="$AWS_ENDPOINT_URL" route53 change-resource-record-sets --hosted-zone-id $ID --change-batch file://resources/example.change.batch.json
+          aws --endpoint-url="$AWS_ENDPOINT_URL" route53 create-hosted-zone --name muchobien.dev --caller-reference GHActions
+          ID=$(aws --endpoint-url="$AWS_ENDPOINT_URL" route53 list-hosted-zones-by-name --dns-name muchobien.dev --query="HostedZones[0].Id" --output text)
+          aws --endpoint-url="$AWS_ENDPOINT_URL" route53 change-resource-record-sets --hosted-zone-id $ID --change-batch file://resources/muchobien.change.batch.json
+
+      - name: Backup Route53
+        id: secrets
+        uses: ./
+
+      - name: Check if example.com was backed up
+        run: |
+          IFS= read -rd '' EXPECTED_FILE_CONTENT < resources/example.change.batch.json
+          IFS= read -rd '' ACTUAL_FILE_CONTENT < ~/muchobien/backup-route53/example.com.json
+
+          if [ "$EXPECTED_FILE_CONTENT" != "$ACTUAL_FILE_CONTENT" ]; then
+              echo -e "Env file is not what was expected"
+              diff -u <(echo "$EXPECTED_FILE_CONTENT") <(echo "$ACTUAL_FILE_CONTENT")
+              exit 1
+          fi
+
+      - name: Check if muchobien.dev was backed up
+        run: |
+          IFS= read -rd '' EXPECTED_FILE_CONTENT < resources/muchobien.change.batch.json
+          IFS= read -rd '' ACTUAL_FILE_CONTENT < ~/muchobien/backup-route53/muchobien.dev.json
+
+          if [ "$EXPECTED_FILE_CONTENT" != "$ACTUAL_FILE_CONTENT" ]; then
+              echo -e "Env file is not what was expected"
+              diff -u <(echo "$EXPECTED_FILE_CONTENT") <(echo "$ACTUAL_FILE_CONTENT")
+              exit 1
+          fi
+
+      - name: Tar files
+        run: tar -cvf route53.tar ~/muchobien/backup-route53
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: route53-backup
+          path: route53.tar
+          if-no-files-found: error

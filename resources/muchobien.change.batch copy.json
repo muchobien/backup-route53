@@ -1,0 +1,22 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "google.muchobien.dev",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [{"Value": "google.com"}]
+      }
+    },
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "a.muchobien.dev",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [{"Value": "4.4.4.4"}]
+      }
+    }
+  ]
+}
