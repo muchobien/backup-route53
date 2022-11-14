@@ -55,6 +55,9 @@ jobs:
         id: secrets
         uses: ./
 
+      - name: List files
+        run: ls -la ~/muchobien/backup-route53
+
       - name: Check if files are created
         run: |
           if [ ! -f "~/muchobien/backup-route53/example.com.json" ]; then
