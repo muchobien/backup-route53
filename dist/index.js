@@ -79,7 +79,7 @@ class Output {
     static async build(input) {
         (0, core_1.startGroup)('Creating backup directory');
         await (0, promises_1.mkdir)(input.path, { recursive: true });
-        (0, core_1.debug)(`Backup directory created: ${input.path}`);
+        (0, core_1.info)(`Backup directory created: ${input.path}`);
         (0, core_1.endGroup)();
         return new Output(input);
     }
