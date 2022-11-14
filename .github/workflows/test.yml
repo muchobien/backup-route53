@@ -55,26 +55,16 @@ jobs:
         id: secrets
         uses: ./
 
-      - name: Check if example.com was backed up
+      - name: Check if files are created
         run: |
-          IFS= read -rd '' EXPECTED_FILE_CONTENT < resources/example.change.batch.json
-          IFS= read -rd '' ACTUAL_FILE_CONTENT < ~/muchobien/backup-route53/example.com.json
-
-          if [ "$EXPECTED_FILE_CONTENT" != "$ACTUAL_FILE_CONTENT" ]; then
-              echo -e "Env file is not what was expected"
-              diff -u <(echo "$EXPECTED_FILE_CONTENT") <(echo "$ACTUAL_FILE_CONTENT")
-              exit 1
+          if [ ! -f "~/muchobien/backup-route53/example.com.json" ]; then
+            echo "example.com.json not found"
+            exit 1
           fi
 
-      - name: Check if muchobien.dev was backed up
-        run: |
-          IFS= read -rd '' EXPECTED_FILE_CONTENT < resources/muchobien.change.batch.json
-          IFS= read -rd '' ACTUAL_FILE_CONTENT < ~/muchobien/backup-route53/muchobien.dev.json
-
-          if [ "$EXPECTED_FILE_CONTENT" != "$ACTUAL_FILE_CONTENT" ]; then
-              echo -e "Env file is not what was expected"
-              diff -u <(echo "$EXPECTED_FILE_CONTENT") <(echo "$ACTUAL_FILE_CONTENT")
-              exit 1
+          if [ ! -f "~/muchobien/backup-route53/muchobien.dev.json" ]; then
+            echo "muchobien.dev.json not found"
+            exit 1
           fi
 
       - name: Tar files
