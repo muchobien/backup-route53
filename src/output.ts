@@ -1,4 +1,11 @@
-import {setFailed, setOutput, debug, startGroup, endGroup} from '@actions/core'
+import {
+  setFailed,
+  setOutput,
+  debug,
+  startGroup,
+  endGroup,
+  info
+} from '@actions/core'
 import {writeFile, mkdir} from 'fs/promises'
 import {Input} from './input'
 
@@ -12,7 +19,7 @@ export class Output {
   static async build(input: Input): Promise<Output> {
     startGroup('Creating backup directory')
     await mkdir(input.path, {recursive: true})
-    debug(`Backup directory created: ${input.path}`)
+    info(`Backup directory created: ${input.path}`)
     endGroup()
 
     return new Output(input)
