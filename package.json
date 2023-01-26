@@ -29,7 +29,7 @@
     "@aws-sdk/client-route-53": "3.257.0"
   },
   "devDependencies": {
-    "@types/jest": "29.2.6",
+    "@types/jest": "29.4.0",
     "@types/node": "18.11.18",
     "@typescript-eslint/parser": "5.49.0",
     "@vercel/ncc": "0.36.0",
