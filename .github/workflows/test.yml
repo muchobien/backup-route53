@@ -11,7 +11,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set Node.js 16.x
         uses: actions/setup-node@v3
@@ -41,7 +41,7 @@ jobs:
           - 4566:4566
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Route53
         run: |
           aws --endpoint-url="$AWS_ENDPOINT_URL" route53 create-hosted-zone --name example.com --caller-reference GHActions
